@@ -6,11 +6,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace ActiveProgramStatistics
 {
      class ProgramStatiscisGetter
     {
+        static List<ProgramStatiscisGetter> ProgramList = new List<ProgramStatiscisGetter>();
+
+
         //Importing external dll to monitor windows foreground processes
 
         [DllImport("user32.dll")]
@@ -18,7 +20,19 @@ namespace ActiveProgramStatistics
         [DllImport("user32.dll")]
         public static extern UInt32 GetWindowThreadProcessId(IntPtr hwnd, ref Int32 pid);
 
-
+        private int time=0;
+        public int Time
+        {
+            get
+            {
+                return time;
+            }
+            set
+            {
+                time = value;
+            }
+        }
+        
 
         IntPtr h = GetForegroundWindow();
         int pid = 0;
@@ -39,10 +53,13 @@ namespace ActiveProgramStatistics
             GetWindowThreadProcessId(h, ref pid);
             Process process = Process.GetProcessById(pid);
             MainWindowTitle =  process.MainWindowTitle;
-          
+
+            ProgramList.Add(this);
+
+           
+
         }
 
-
-
+      
     }
 }
