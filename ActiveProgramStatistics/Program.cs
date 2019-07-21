@@ -19,10 +19,8 @@ namespace ActiveProgramStatistics
             Application.Run(new Form1());
 
 
-            ProgramStatiscisGetter Pr = new ProgramStatiscisGetter();
-
-
-
+           
+           
         }
     }
 }

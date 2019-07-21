@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ActiveProgramStatistics
 {
-    class ProgramStatiscisGetter
+     class ProgramStatiscisGetter
     {
         //Importing external dll to monitor windows foreground processes
 
@@ -23,18 +23,26 @@ namespace ActiveProgramStatistics
         IntPtr h = GetForegroundWindow();
         int pid = 0;
 
-        // creating variable with properties for getting the title of an active window
+        // creating an accsess variable
 
-        string SrtingName;
-        string MainWindowTitle
+        private string SrtingName;
+        public string MainWindowTitle
         {
             get { return SrtingName; }
-            set { GetWindowThreadProcessId(h, ref pid); Process process = Process.GetProcessById(pid); SrtingName = process.MainWindowTitle; }
+            private set { SrtingName = value ;  }
+        } 
+
+        // initializing accsess variable through class constructor
+
+        public ProgramStatiscisGetter()
+        {
+            GetWindowThreadProcessId(h, ref pid);
+            Process process = Process.GetProcessById(pid);
+            MainWindowTitle =  process.MainWindowTitle;
+          
         }
 
-    
-      
 
-        
+
     }
 }

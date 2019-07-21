@@ -17,10 +17,15 @@ namespace ActiveProgramStatistics
         public Form1()
         {
             InitializeComponent();
+            ProgramStatiscisGetter Pr = new ProgramStatiscisGetter();
+            StatWatcher St = new StatWatcher(panel1,Pr.MainWindowTitle);
         }
 
+
+
+
         //placeholder class
-        class StatWatcher
+     public   class StatWatcher
         {
             //declare a static list of all class instances
 
@@ -32,7 +37,7 @@ namespace ActiveProgramStatistics
             public StatWatcher(Panel ExternalPanel, String StringName = "Placeholder")
             {
                 Panel panel = new Panel();
-                panel.Size = new Size(100, 406);
+                panel.Size = new Size(406, 50);
                 panel.BorderStyle = BorderStyle.Fixed3D;
 
                 //creating lable that will get data from ProgramStatisticsGetter Class
