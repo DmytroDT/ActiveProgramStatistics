@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace ActiveProgramStatistics
 {
-     class ProgramStatiscisGetter
+    //static class that hanles extracting data of foreground processes
+
+    static class ProcessInfo
     {
-        static List<ProgramStatiscisGetter> ProgramList = new List<ProgramStatiscisGetter>();
+        
 
 
         //Importing external dll to monitor windows foreground processes
@@ -20,46 +22,32 @@ namespace ActiveProgramStatistics
         [DllImport("user32.dll")]
         public static extern UInt32 GetWindowThreadProcessId(IntPtr hwnd, ref Int32 pid);
 
-        private int time=0;
-        public int Time
+
+        static IntPtr h = GetForegroundWindow();
+        static int pid = 0;
+        static public int Pid 
         {
-            get
-            {
-                return time;
-            }
-            set
-            {
-                time = value;
-            }
+            get { return pid; }
+            private set { value =  pid; }
         }
-        
-
-        IntPtr h = GetForegroundWindow();
-        int pid = 0;
-
         // creating an accsess variable
 
-        private string SrtingName;
-        public string MainWindowTitle
-        {
-            get { return SrtingName; }
-            private set { SrtingName = value ;  }
-        } 
+
+        static public string MainWindowTitle { get;set; }
 
         // initializing accsess variable through class constructor
 
-        public ProgramStatiscisGetter()
+        static ProcessInfo()
         {
             GetWindowThreadProcessId(h, ref pid);
             Process process = Process.GetProcessById(pid);
             MainWindowTitle =  process.MainWindowTitle;
-
-            ProgramList.Add(this);
-
-           
-
-        }
+         }
 
       
     }
+
+    
 }
+
+

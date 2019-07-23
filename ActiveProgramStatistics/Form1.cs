@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Timers;
-//using alias to prevent namespace collisions
+//using alias to prevent namespace collisions of thread and timers namespaces
 using tTimer = System.Timers.Timer;
 
 
@@ -21,40 +21,18 @@ namespace ActiveProgramStatistics
         public Form1()
         {
           InitializeComponent();
-             int y = 50;
-            tTimer timer = new tTimer(10000);
+          
 
-          ProgramStatiscisGetter Pr = new ProgramStatiscisGetter();
+          StatWatcher St = new StatWatcher(panel1);
 
-          StatWatcher St = new StatWatcher(panel1,Pr.MainWindowTitle);
-
-            //creating timed event of checking current active window
-
-          timer.Elapsed += new ElapsedEventHandler(TimerEvent);
-
-             void TimerEvent(object source, ElapsedEventArgs e)
-            {
-                ProgramStatiscisGetter Pt = new ProgramStatiscisGetter();
-
-                //checking if new instance of ProgramStatiscisGetter has different window title than previous one
-
-                if (Pt.MainWindowTitle != Pr.MainWindowTitle)
-                {// if it has , creating new component and changing it's location
-                
-                    StatWatcher Sy = new StatWatcher(panel1, Pt.MainWindowTitle,y);
-                    y += 50;
-                }
-                else
-                { //if not , incrementing value of variable tracking amount of time that window is opened
-                    Pr.Time += 10;
-                }
-               
-            }
+         
+           
         }
 
-        
 
-        
+
+
+
         //placeholder class
         public class StatWatcher
         {
@@ -62,30 +40,65 @@ namespace ActiveProgramStatistics
 
             static List<StatWatcher> StatWatcherList = new List<StatWatcher>();
 
-            
-
+            int Pid = ProcessInfo.Pid;
+            string StringName = ProcessInfo.MainWindowTitle;
+            int  time=0;
+            Label label = new Label();
+           static int PointY=0;
             //creating visual component representing foreground opened program 
 
-            public StatWatcher(Panel ExternalPanel, String StringName = "Placeholder", int y=0,int time =0)
+            public StatWatcher(Panel ExternalPanel, int y = 0)
             {
                 Panel panel = new Panel();
-                panel.Size = new Size(406, 50);
+                panel.Size = new Size(600, 50);
                 panel.BorderStyle = BorderStyle.Fixed3D;
 
-                //creating lable that will get data from ProgramStatisticsGetter Class
-                Label lb = new Label();
-                lb.Text = StringName +$" has been opened for {(time<60? time+"seconds":(time<3600? (time / 60)+"minutes":(time<216000?(time/3600)+"hours":"")))}";
-                panel.Controls.Add(lb);
+
+
+                label.AutoSize = true;
+                label.Text = StringName;
+                panel.Controls.Add(label);
 
                 //adding this component to external panel
                 ExternalPanel.Controls.Add(panel);
                 panel.Location = new Point(0,y);
-
-
+              
+               
                 StatWatcherList.Add(this);
+                ActiveTimer(panel,ExternalPanel, time);
+
+
+
             }
 
-            
+            public void ActiveTimer(Panel panel,Panel ExternalPanel, int time=10)
+            {
+                tTimer timer = new tTimer(10000);
+
+                timer.Elapsed += new ElapsedEventHandler(TimerEvent);
+                //checking if there are new active windows , if there is , creating new component , if not - incrementing time field
+
+                void TimerEvent(object source, ElapsedEventArgs e)
+                {
+                    if (Pid == ProcessInfo.Pid)
+                    {
+                        label.Text += $" has been opened for {(time < 60 ? time + "seconds" : (time < 3600 ? (time / 60) + "minutes" : (time < 216000 ? (time / 3600) + "hours" : "")))}";
+                        time += 10;
+                       
+                    }
+                    else
+                    {
+                        PointY += 50;
+                        StatWatcher NewInstance = new StatWatcher(ExternalPanel,PointY);
+                        StatWatcherList.Add(NewInstance);
+                    }
+                    panel.Update();
+
+                }
+
+               
+            }
+
 
         }
     }
