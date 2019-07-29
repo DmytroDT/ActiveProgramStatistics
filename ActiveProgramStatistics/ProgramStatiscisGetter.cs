@@ -4,7 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
+
 
 namespace ActiveProgramStatistics
 {
@@ -24,7 +25,7 @@ namespace ActiveProgramStatistics
 
 
         static IntPtr h = GetForegroundWindow();
-        static int pid = 0;
+        static  int pid = 0;
         static public int Pid 
         {
             get { return pid; }
@@ -36,14 +37,29 @@ namespace ActiveProgramStatistics
         static public string MainWindowTitle { get;set; }
 
         // initializing accsess variable through class constructor
-
+        
         static ProcessInfo()
         {
             GetWindowThreadProcessId(h, ref pid);
             Process process = Process.GetProcessById(pid);
-            MainWindowTitle =  process.MainWindowTitle;
-         }
+            MainWindowTitle = process.MainWindowTitle;
+       }
+        //method with timer for checking if pid have changed
+    public  static void UpdateValues()
+        {
+            Timer timer = new Timer(1000);
+            timer.AutoReset = true;
+            timer.Enabled = true;
+            timer.Elapsed += new ElapsedEventHandler(TimerEvent);
 
+            void TimerEvent(object source, ElapsedEventArgs e)
+            {
+                h = GetForegroundWindow();
+                GetWindowThreadProcessId(h, ref pid);
+                Process process = Process.GetProcessById(pid);
+                MainWindowTitle = process.MainWindowTitle;
+            }
+        }
       
     }
 

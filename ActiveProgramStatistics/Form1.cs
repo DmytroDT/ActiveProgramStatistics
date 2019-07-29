@@ -18,22 +18,15 @@ namespace ActiveProgramStatistics
 
     public partial class Form1 : Form
     {
+       
+
         public Form1()
         {
           InitializeComponent();
-          
-
-          
-
-         
-           
+            StatWatcher st = new StatWatcher(panel1);
+            
         }
-
-
-
-
-
-      
+        
     }
 
 
@@ -66,43 +59,49 @@ namespace ActiveProgramStatistics
             ExternalPanel.Controls.Add(panel);
             panel.Location = new Point(0, y);
 
-
+            
             StatWatcherList.Add(this);
-            ActiveTimer(panel, ExternalPanel, time);
+            ProcessInfo.UpdateValues();
+            ActiveTimer( panel, ExternalPanel,ref time,  Pid);
 
 
 
-        }
-
-        public void ActiveTimer(Panel panel, Panel ExternalPanel, int time = 10)
+         
+    }
+      
+        
+        void ActiveTimer(Panel panel,Panel ExternalPanel, ref int Time, int Pid)
         {
+
+            int time = 0;
             tTimer timer = new tTimer(10000);
             timer.AutoReset = true;
             timer.Enabled = true;
             timer.Elapsed += new ElapsedEventHandler(TimerEvent);
+
             //checking if there are new active windows , if there is , creating new component , if not - incrementing time field
 
-            void TimerEvent(object source, ElapsedEventArgs e)
+             void  TimerEvent(object source, ElapsedEventArgs e)
             {
                 if (Pid == ProcessInfo.Pid)
                 {
-                    label.Text = StringName + $" has been opened for {(time < 60 ? time + "seconds" : (time < 3600 ? (time / 60) + "minutes" : (time < 216000 ? (time / 3600) + "hours" : "")))}";
+                    label.Text = StringName + $" has been opened for {(time < 60 ? time + " seconds" : (time < 3600 ? (time / 60) + " minutes" : (time < 216000 ? (time / 3600) + " hours" : "")))}";
                     time += 10;
 
                 }
                 else
                 {
                     PointY += 50;
-                    StatWatcher NewInstance = new StatWatcher(ExternalPanel, PointY);
+                    StatWatcher NewInstance =  new StatWatcher(ExternalPanel, PointY);
                     StatWatcherList.Add(NewInstance);
                 }
-                panel.Update();
+                
 
             }
-
-
+            Time = time;
+            panel.Update();
         }
 
-
+      
     }
 }
