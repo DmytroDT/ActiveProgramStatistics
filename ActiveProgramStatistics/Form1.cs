@@ -82,9 +82,7 @@ namespace ActiveProgramStatistics
 
             
             StatWatcherList.Add(this);
-
-          
-           
+            
         }
        
         static   public   void ActiveTimer()
@@ -104,14 +102,9 @@ namespace ActiveProgramStatistics
                 PointY += 50;
                 StatWatcher NewInstance = new StatWatcher(StatWatcherList[0].ExternalPanel, PointY);
             }
-
-
-           
-
+            
         }
-
-
-
+        
     }
    
 }
