@@ -14,17 +14,36 @@ using tTimer = System.Timers.Timer;
 
 namespace ActiveProgramStatistics
 {
-    
+    public delegate void UpdateDelegate();
 
     public partial class Form1 : Form
     {
-       
+      
 
         public Form1()
         {
           InitializeComponent();
             StatWatcher st = new StatWatcher(panel1);
+
+            //timer that invokes form  and ProcessInfo update  every 10 second 
+
+            tTimer timer = new tTimer(10000);
+            timer.AutoReset = true;
+            timer.Enabled = true;
+            timer.Elapsed += new ElapsedEventHandler(TimerEvent);
+           
+
+
+
+            void TimerEvent(object source, ElapsedEventArgs e)
+            {
+                ProcessInfo.UpdateValues();
+                UpdateDelegate TimerDelegate = StatWatcher.ActiveTimer;
+                Invoke(TimerDelegate);
             
+
+            }
+          
         }
         
     }
@@ -37,22 +56,24 @@ namespace ActiveProgramStatistics
         static List<StatWatcher> StatWatcherList = new List<StatWatcher>();
 
         int Pid = ProcessInfo.Pid;
-        string StringName = ProcessInfo.MainWindowTitle;
-        int time = 0;
+        int time = 10;
         Label label = new Label();
         static int PointY = 0;
+        Panel panel = new Panel();
+        Panel ExternalPanel = new Panel();
+
         //creating visual component representing foreground opened program 
 
         public StatWatcher(Panel ExternalPanel, int y = 0)
         {
-            Panel panel = new Panel();
-            panel.Size = new Size(600, 50);
+           
+            panel.Size = new Size(759, 50);
             panel.BorderStyle = BorderStyle.Fixed3D;
 
-
+            this.ExternalPanel = ExternalPanel;
 
             label.AutoSize = true;
-            label.Text = StringName;
+            label.Text = ProcessInfo.MainWindowTitle; 
             panel.Controls.Add(label);
 
             //adding this component to external panel
@@ -61,47 +82,36 @@ namespace ActiveProgramStatistics
 
             
             StatWatcherList.Add(this);
-            ProcessInfo.UpdateValues();
-            ActiveTimer( panel, ExternalPanel,ref time,  Pid);
 
-
-
-         
-    }
-      
-        
-        void ActiveTimer(Panel panel,Panel ExternalPanel, ref int Time, int Pid)
+          
+           
+        }
+       
+        static   public   void ActiveTimer()
         {
+            //checking if there are new active windows by comparing PID's in list to ProcessInfo current PID , if there is -catching exeption and creating new component , if not - incrementing time field
 
-            int time = 0;
-            tTimer timer = new tTimer(10000);
-            timer.AutoReset = true;
-            timer.Enabled = true;
-            timer.Elapsed += new ElapsedEventHandler(TimerEvent);
-
-            //checking if there are new active windows , if there is , creating new component , if not - incrementing time field
-
-             void  TimerEvent(object source, ElapsedEventArgs e)
+            try
             {
-                if (Pid == ProcessInfo.Pid)
-                {
-                    label.Text = StringName + $" has been opened for {(time < 60 ? time + " seconds" : (time < 3600 ? (time / 60) + " minutes" : (time < 216000 ? (time / 3600) + " hours" : "")))}";
-                    time += 10;
-
-                }
-                else
-                {
-                    PointY += 50;
-                    StatWatcher NewInstance =  new StatWatcher(ExternalPanel, PointY);
-                    StatWatcherList.Add(NewInstance);
-                }
-                
-
+            int i= StatWatcherList.FindIndex(Watcher => Watcher.Pid == ProcessInfo.Pid);
+              
+                StatWatcherList[i].label.Text = ProcessInfo.MainWindowTitle +  $" has been opened for {(StatWatcherList[i].time < 60 ? StatWatcherList[i].time + " seconds" : (StatWatcherList[i].time < 3600 ? (StatWatcherList[i].time / 60) + " minutes" : (StatWatcherList[i].time < 216000 ? (StatWatcherList[i].time / 3600) + " hours" : "")))}";
+                StatWatcherList[i].time += 10;
+                StatWatcherList[i].panel.Update();
             }
-            Time = time;
-            panel.Update();
+            catch (ArgumentOutOfRangeException )
+            {
+                PointY += 50;
+                StatWatcher NewInstance = new StatWatcher(StatWatcherList[0].ExternalPanel, PointY);
+            }
+
+
+           
+
         }
 
-      
+
+
     }
+   
 }

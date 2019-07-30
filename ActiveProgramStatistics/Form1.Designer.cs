@@ -33,9 +33,10 @@
             // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
             this.panel1.Location = new System.Drawing.Point(19, 21);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(597, 406);
+            this.panel1.Size = new System.Drawing.Size(759, 406);
             this.panel1.TabIndex = 0;
             // 
             // Form1
@@ -45,7 +46,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Active Program Statistics";
             this.ResumeLayout(false);
 
         }

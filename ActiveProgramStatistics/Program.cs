@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
-
 namespace ActiveProgramStatistics
 {
     static class Program
@@ -19,8 +18,8 @@ namespace ActiveProgramStatistics
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
 
-
-            
+         
+             
     }
        
     }

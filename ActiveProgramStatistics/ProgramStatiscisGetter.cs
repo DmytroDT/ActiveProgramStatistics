@@ -31,7 +31,7 @@ namespace ActiveProgramStatistics
             get { return pid; }
             private set { value =  pid; }
         }
-        // creating an accsess variable
+        // creating an read only PID variable
 
 
         static public string MainWindowTitle { get;set; }
@@ -44,21 +44,16 @@ namespace ActiveProgramStatistics
             Process process = Process.GetProcessById(pid);
             MainWindowTitle = process.MainWindowTitle;
        }
-        //method with timer for checking if pid have changed
+        //method  checking if pid have changed
     public  static void UpdateValues()
         {
-            Timer timer = new Timer(1000);
-            timer.AutoReset = true;
-            timer.Enabled = true;
-            timer.Elapsed += new ElapsedEventHandler(TimerEvent);
 
-            void TimerEvent(object source, ElapsedEventArgs e)
-            {
-                h = GetForegroundWindow();
-                GetWindowThreadProcessId(h, ref pid);
-                Process process = Process.GetProcessById(pid);
-                MainWindowTitle = process.MainWindowTitle;
-            }
+            h = GetForegroundWindow();
+            GetWindowThreadProcessId(h, ref pid);
+            Process process = Process.GetProcessById(pid);
+            MainWindowTitle = process.MainWindowTitle;
+
+          
         }
       
     }
