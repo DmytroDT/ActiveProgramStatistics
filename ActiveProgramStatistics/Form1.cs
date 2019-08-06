@@ -67,24 +67,30 @@ namespace ActiveProgramStatistics
         public StatWatcher(Panel ExternalPanel, int y = 0)
         {
            
-            panel.Size = new Size(759, 50);
+            panel.Size = new Size(ExternalPanel.Width, 50);
             panel.BorderStyle = BorderStyle.Fixed3D;
-
+          
+            
             this.ExternalPanel = ExternalPanel;
 
-            label.AutoSize = true;
-            label.Text = ProcessInfo.MainWindowTitle; 
+            label.Text = ProcessInfo.MainWindowTitle + " has been opened for 0 seconds";
+            label.TextAlign = ContentAlignment.MiddleCenter ;
             panel.Controls.Add(label);
-
-            //adding this component to external panel
+            label.Dock = DockStyle.Fill;
+           // adding this component to external panel
             ExternalPanel.Controls.Add(panel);
             panel.Location = new Point(0, y);
-
             
             StatWatcherList.Add(this);
-            
+            ExternalPanel.Resize += new EventHandler(PanelResizeHandler);
         }
-       
+
+        private void PanelResizeHandler(Object sender , EventArgs e)
+        {
+            panel.Size = new Size(ExternalPanel.Width, 50);
+        }
+
+
         static   public   void ActiveTimer()
         {
             //checking if there are new active windows by comparing PID's in list to ProcessInfo current PID , if there is -catching exeption and creating new component , if not - incrementing time field
